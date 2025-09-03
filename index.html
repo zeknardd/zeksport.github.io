@@ -7,10 +7,11 @@
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
   body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin:0; }
-  header { padding: 10px; background: #1f1f1f; display: flex; gap: 10px; }
+  header { padding: 10px; background: #1f1f1f; display: flex; gap: 10px; flex-wrap: wrap; }
   header button { background: #333; border:none; padding:10px 15px; color:#fff; cursor:pointer; border-radius:5px;}
   header button:hover { background:#555; }
-  video { width:100%; max-width:100%; height:auto; display:block; margin:0 auto; background:#000; }
+  .vlc-btn { margin-left:auto; background:#0078D7; }
+  video { width:100%; max-width:100%; height:auto; display:block; margin:0 auto; background:#000; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -20,6 +21,7 @@
   <button onclick="changeServer(1)">Sunucu 2</button>
   <button onclick="changeServer(2)">Sunucu 3</button>
   <button onclick="changeServer(3)">Sunucu 4</button>
+  <button id="vlcBtn" class="vlc-btn">VLC ile Aç</button>
 </header>
 
 <video id="video" controls autoplay></video>
@@ -27,16 +29,19 @@
 <script>
   // Yayın linklerini Base64 ile gizleme
   const links = [
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5062/playlist.m3u8?verify=1756940819902~95.65.219.136~5b0e4c8d5c53563d0a54a99292326b00", // link1
+    "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rMS5tM3U4", // link1
     "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rMi5tM3U4", // link2
     "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rMy5tM3U4", // link3
     "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rNC5tM3U4"  // link4
   ];
 
   const video = document.getElementById('video');
+  const vlcBtn = document.getElementById('vlcBtn');
   let hls;
+  let currentIndex = 0;
 
   function changeServer(index){
+    currentIndex = index;
     const url = atob(links[index]); // Base64 çöz
     if(hls) { hls.destroy(); }
     if(Hls.isSupported()){
@@ -52,6 +57,19 @@
 
   // Sayfa açılınca Sunucu 1'i başlat
   changeServer(0);
+
+  // VLC ile açma butonu
+  vlcBtn.addEventListener('click', () => {
+    const url = atob(links[currentIndex]);
+    // .m3u açtırmak için tarayıcıda indirilebilir
+    const blob = new Blob([`#EXTM3U\n#EXTINF:-1,Sunucu ${currentIndex+1}\n${url}`], { type: 'audio/x-mpegurl' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Sunucu${currentIndex+1}.m3u`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
 </script>
 
 </body>
