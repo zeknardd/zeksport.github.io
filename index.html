@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zeksport - Canlı TV İzle</title>
+<title>Zeksport TV - Yerel Yayın Platformu</title>
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root {
@@ -18,7 +17,6 @@
     --button-bg: #222222;
     --button-hover: #333333;
     --active-button: #444444;
-    --success-color: #00c853;
   }
   
   * {
@@ -136,13 +134,10 @@
   .player-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 aspect ratio */
+    height: 100%;
   }
   
   #player {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
   }
@@ -204,7 +199,7 @@
   
   @keyframes spin {
     0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+   100% { transform: rotate(360deg); }
   }
   
   .error-message {
@@ -235,49 +230,14 @@
     transform: scale(1.05);
   }
   
-  .troubleshooting {
-    background: #1c1c1c;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border-left: 4px solid var(--secondary-color);
-  }
-  
-  .troubleshooting h3 {
-    color: var(--secondary-color);
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .troubleshooting ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .troubleshooting li {
-    margin-bottom: 10px;
-    padding-left: 25px;
-    position: relative;
-  }
-  
-  .troubleshooting li:before {
-    content: "•";
-    color: var(--primary-color);
-    font-weight: bold;
-    position: absolute;
-    left: 10px;
-  }
-  
-  .proxy-notice {
+  .local-notice {
     background: #2c2c2c;
     padding: 15px;
     border-radius: 8px;
     margin-top: 20px;
     font-size: 14px;
     color: var(--gray-text);
-    border-left: 4px solid var(--success-color);
+    border-left: 4px solid #00c853;
   }
   
   footer {
@@ -287,30 +247,6 @@
     font-size: 14px;
     margin-top: 40px;
     border-top: 1px solid #222;
-  }
-  
-  .quality-selector {
-    margin-top: 15px;
-    text-align: center;
-  }
-  
-  .quality-btn {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 5px;
-    transition: all 0.3s ease;
-  }
-  
-  .quality-btn:hover {
-    background: #555;
-  }
-  
-  .quality-btn.active {
-    background: var(--secondary-color);
   }
   
   @media (max-width: 768px) {
@@ -333,16 +269,13 @@
   }
   
   @media (max-width: 480px) {
-    .server-btn span {
-      display: none;
-    }
-    
     .server-btn {
-      padding: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
     }
     
     .server-btn i {
-      font-size: 18px;
+      font-size: 14px;
     }
     
     #player-container {
@@ -370,25 +303,21 @@
       ZEKSPORT TV
     </div>
     <div class="server-buttons">
-      <button class="server-btn" onclick="changeServer(0)">
-        <i class="fas fa-satellite"></i>
-        <span>beinsport</span>
-        <span class="status-indicator status-live"></span>
+      <button class="server-btn" onclick="loadLocalStream('bein.m3u8')">
+        <i class="fas fa-play-circle"></i>
+        <span>BeIN Sports</span>
       </button>
-      <button class="server-btn" onclick="changeServer(1)">
-        <i class="fas fa-satellite"></i>
-        <span>S sport</span>
-        <span class="status-indicator status-live"></span>
+      <button class="server-btn" onclick="loadLocalStream('trt.m3u8')">
+        <i class="fas fa-play-circle"></i>
+        <span>TRT Spor</span>
       </button>
-      <button class="server-btn" onclick="changeServer(2)">
-        <i class="fas fa-satellite"></i>
-        <span>Tabispor</span>
-        <span class="status-indicator status-live"></span>
+      <button class="server-btn" onclick="loadLocalStream('eurosport.m3u8')">
+        <i class="fas fa-play-circle"></i>
+        <span>EuroSport</span>
       </button>
-      <button class="server-btn" onclick="changeServer(3)">
-        <i class="fas fa-satellite"></i>
-        <span> A spor</span>
-        <span class="status-indicator status-live"></span>
+      <button class="server-btn" onclick="loadLocalStream('smart.m3u8')">
+        <i class="fas fa-play-circle"></i>
+        <span>Smart Spor</span>
       </button>
     </div>
   </div>
@@ -414,15 +343,15 @@
     </div>
     
     <div class="player-info">
-      <h2>Canlı Yayın</h2>
-      <p>Zeksport TV - Kaliteli Yayın Keyfi</p>
+      <h2>Canlı Spor Yayınları</h2>
+      <p>Zeksport TV - Kesintisiz Spor Keyfi</p>
     </div>
     
     <div class="server-info">
       <div class="server-status">
-        <span>Mevcut Kanal: <strong id="current-server">beinsport</strong></span>
-        <span class="status-indicator status-live"></span>
-        <span>Canlı Yayın</span>
+        <span>Mevcut Kanal: <strong id="current-server">Seçilmedi</strong></span>
+        <span class="status-indicator status-offline"></span>
+        <span>Yayın Bekleniyor</span>
       </div>
       <div class="viewer-count">
         <i class="fas fa-eye"></i>
@@ -430,73 +359,58 @@
       </div>
     </div>
     
-    <div class="proxy-notice">
+    <div class="local-notice">
       <i class="fas fa-info-circle"></i> 
-      Not: Bazı kanallar coğrafi kısıtlama nedeniyle çalışmayabilir. Lütfen farklı bir kanal deneyin.
-    </div>
-    
-    <div class="troubleshooting">
-      <h3><i class="fas fa-tools"></i> Yayın Sorunu Çözümleri</h3>
-      <ul>
-        <li>Sayfayı yeniden yüklemeyi deneyin (F5)</li>
-        <li>Farklı bir tarayıcı kullanmayı deneyin (Chrome, Firefox)</li>
-        <li>Diğer kanalları deneyin</li>
-        <li>VPN kullanmayı deneyin (coğrafi kısıtlamalar için)</li>
-        <li>Tarayıcı önbelleğini temizleyin</li>
-      </ul>
+      optimize edilmiştir. CORS sorunu yaşanmaz.
     </div>
   </section>
 </main>
 
 <footer>
   <div class="container">
-    <p>© Zeksport TV - Tüm hakları saklıdır. | Kesintisiz yayın keyfi</p>
+    <p>© Zeksport TV - Tüm hakları saklıdır. | Yerel Yayın Çözümü</p>
   </div>
 </footer>
 
 <script>
-  // Yayın linkleri - CORS proxy ile
-  const links = [
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5062/playlist.m3u8?verify=1756946284182~95.65.219.136~e0656e35f0b9ed2b20b1711f2b86b2d5", // 1. Kanal
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 2. Kanal (CORS proxy ile)
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5071/playlist.m3u8?verify=1756946887131~95.65.219.136~f9e555bd14a278f910a30b245fdde81c", // 3. Kanal
-    "https://example.com/link4.m3u8"  // 4. Kanal
-  ];
-
-  let currentIndex = 0;
+  let currentSource = '';
   let player;
   let isLoading = true;
-  let viewerCount = Math.floor(Math.random() * 1000) + 500;
+  let viewerCount = Math.floor(Math.random() * 500) + 100;
 
   // İzleyici sayısını güncelleme
   function updateViewerCount() {
-    viewerCount += Math.floor(Math.random() * 10) - 4;
-    if (viewerCount < 400) viewerCount = 400;
+    viewerCount += Math.floor(Math.random() * 5) - 2;
+    if (viewerCount < 50) viewerCount = 50;
     document.getElementById('viewer-count').textContent = viewerCount.toLocaleString('tr-TR');
   }
   
   setInterval(updateViewerCount, 5000);
 
-  function changeServer(index) {
+  // Yerel M3U8 dosyasını yükle
+  function loadLocalStream(filename) {
     // UI güncelleme
-    document.querySelectorAll('.server-btn').forEach((btn, i) => {
-      if (i === index) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+    document.querySelectorAll('.server-btn').forEach((btn) => {
+      btn.classList.remove('active');
     });
+    event.target.classList.add('active');
     
-    const serverNames = ['1. Kanal', '2. Kanal', '3. Kanal', '4. Kanal'];
-    document.getElementById('current-server').textContent = serverNames[index];
+    // Kanal ismini güncelle
+    let channelName = "BeIN Sports";
+    if (filename === 'trt.m3u8') channelName = "TRT Spor";
+    if (filename === 'eurosport.m3u8') channelName = "EuroSport";
+    if (filename === 'smart.m3u8') channelName = "Smart Spor";
+    
+    document.getElementById('current-server').textContent = channelName;
+    document.querySelector('.status-indicator').className = 'status-indicator status-live';
+    document.querySelector('.server-status span:last-child').textContent = 'Canlı Yayın';
     
     // Yükleme durumunu göster
     isLoading = true;
     document.getElementById('error-message').style.display = 'none';
     document.getElementById('loading').style.display = 'flex';
     
-    currentIndex = index;
-    const url = links[index];
+    currentSource = filename;
     
     if (player) {
       player.destroy();
@@ -505,38 +419,22 @@
     // Yeni oynatıcı oluştur
     try {
       player = new Clappr.Player({
-        source: url,
+        source: filename,
         parentId: "#player",
         width: "100%",
         height: "100%",
         autoPlay: true,
         mute: false,
-        playback: {
-          playbacks: [Clappr.HLSPlayback],
-          hlsjsConfig: {
-            enableWorker: true,
-            lowLatencyMode: true,
-            backBufferLength: 90
-          }
-        },
         mediacontrol: { seekbar: "#E50914" },
         hideMediaControl: false,
-        plugins: [],
         events: {
           onReady: function() {
             isLoading = false;
             document.getElementById('loading').style.display = 'none';
-            console.log("Player hazır");
+            console.log("Player hazır, dosya: " + filename);
           },
           onError: function(e) {
-            // Eğer ilk kanalda hata alınırsa, CORS proxy'li kanalı dene
-            if (index === 0) {
-              console.log("İlk kanalda hata, proxy'li kanala geçiliyor...");
-              changeServer(1);
-              return;
-            }
-            
-            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin veya VPN kullanmayı deneyin.");
+            showError("Yayın yüklenemedi. " + filename + " dosyası bulunamadı veya geçerli değil.");
             console.error("Player hatası:", e);
           }
         }
@@ -556,26 +454,14 @@
 
   function retryStream() {
     document.getElementById('error-message').style.display = 'none';
-    changeServer(currentIndex);
+    loadLocalStream(currentSource);
   }
 
-  function changeQuality(quality) {
-    document.querySelectorAll('.quality-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
-    console.log("Kalite değiştirildi: " + quality);
-  }
-
-  // İlk açılışta 1. Kanal'ı başlat
+  // İlk açılışta izleyici sayacını başlat
   window.onload = function() {
-    changeServer(0);
-    document.querySelector('.server-btn').classList.add('active');
     updateViewerCount();
   };
 </script>
 
 </body>
 </html>
-
