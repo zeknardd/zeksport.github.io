@@ -3,58 +3,407 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zeksport</title>
+<title>Zeksport - Canlı Yayın</title>
 <!-- Clappr Player -->
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  body { margin: 0; font-family: Arial, sans-serif; background: #121212; color: #fff; }
-  header { background: #1f1f1f; display: flex; gap: 10px; padding: 10px; flex-wrap: wrap; }
-  header button { background: #333; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-  header button:hover { background: #555; }
-  #player-container { width: 100%; max-width: 1280px; margin: 10px auto; }
+  :root {
+    --primary-color: #e50914;
+    --dark-bg: #121212;
+    --darker-bg: #0a0a0a;
+    --light-text: #ffffff;
+    --gray-text: #aaaaaa;
+    --button-bg: #222222;
+    --button-hover: #333333;
+    --active-button: #444444;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--dark-bg);
+    color: var(--light-text);
+    line-height: 1.6;
+  }
+  
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  header {
+    background: var(--darker-bg);
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .server-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .server-btn {
+    background: var(--button-bg);
+    color: var(--light-text);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .server-btn:hover {
+    background: var(--button-hover);
+  }
+  
+  .server-btn.active {
+    background: var(--active-button);
+    border-left: 3px solid var(--primary-color);
+  }
+  
+  .server-btn i {
+    font-size: 14px;
+  }
+  
+  .status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 5px;
+  }
+  
+  .status-live {
+    background: var(--primary-color);
+  }
+  
+  .status-offline {
+    background: #666;
+  }
+  
+  .player-section {
+    padding: 20px 0;
+  }
+  
+  #player-container {
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: #000;
+  }
+  
+  .player-info {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .server-info {
+    background: var(--darker-bg);
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .server-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .viewer-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--gray-text);
+  }
+  
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid var(--primary-color);
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .error-message {
+    background: #d32f2f;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    text-align: center;
+    display: none;
+  }
+  
+  .retry-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--gray-text);
+    font-size: 14px;
+    margin-top: 30px;
+    border-top: 1px solid #222;
+  }
+  
+  @media (max-width: 768px) {
+    .server-buttons {
+      gap: 5px;
+    }
+    
+    .server-btn {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    
+    #player-container {
+      height: 300px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .server-btn span {
+      display: none;
+    }
+    
+    .server-btn {
+      padding: 10px;
+    }
+    
+    .server-btn i {
+      font-size: 16px;
+    }
+    
+    #player-container {
+      height: 250px;
+    }
+    
+    .server-info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <button onclick="changeServer(0)">Sunucu 1</button>
-  <button onclick="changeServer(1)">Sunucu 2</button>
-  <button onclick="changeServer(2)">Sunucu 3</button>
-  <button onclick="changeServer(3)">Sunucu 4</button>
+  <div class="container">
+    <div class="logo">ZEKSPORT</div>
+    <div class="server-buttons">
+      <button class="server-btn" onclick="changeServer(0)">
+        <i class="fas fa-server"></i>
+        <span>Sunucu 1</span>
+        <span class="status-indicator status-live"></span>
+      </button>
+      <button class="server-btn" onclick="changeServer(1)">
+        <i class="fas fa-server"></i>
+        <span>Sunucu 2</span>
+        <span class="status-indicator status-live"></span>
+      </button>
+      <button class="server-btn" onclick="changeServer(2)">
+        <i class="fas fa-server"></i>
+        <span>Sunucu 3</span>
+        <span class="status-indicator status-offline"></span>
+      </button>
+      <button class="server-btn" onclick="changeServer(3)">
+        <i class="fas fa-server"></i>
+        <span>Sunucu 4</span>
+        <span class="status-indicator status-offline"></span>
+      </button>
+    </div>
+  </div>
 </header>
 
-<div id="player-container"></div>
+<main class="container">
+  <section class="player-section">
+    <div id="player-container">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Yayın yükleniyor...</p>
+      </div>
+    </div>
+    
+    <div class="error-message" id="error-message">
+      <p><i class="fas fa-exclamation-triangle"></i> Yayın yüklenirken bir hata oluştu.</p>
+      <button class="retry-btn" onclick="retryStream()">Tekrar Dene</button>
+    </div>
+    
+    <div class="player-info">
+      <h2>Canlı Yayın</h2>
+      <p>Zeksport - Spor ve Haber Canlı Yayını</p>
+    </div>
+    
+    <div class="server-info">
+      <div class="server-status">
+        <span>Mevcut Sunucu: <strong id="current-server">Sunucu 1</strong></span>
+        <span class="status-indicator status-live"></span>
+        <span>Canlı</span>
+      </div>
+      <div class="viewer-count">
+        <i class="fas fa-users"></i>
+        <span id="viewer-count">0</span> izleyici
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>© 2023 Zeksport - Tüm hakları saklıdır.</p>
+  </div>
+</footer>
 
 <script>
   // Yayın linklerini Base64 ile gizleme
   const links = [
     "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // link1
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // link2
+    "aHR0cHM6Ly9hLnN0cm1yZHItY2Ytd29ya2VyLWUyNjJkNzFmYTQud29ya2Vycy5kZXYvYmMyYjA1ZDMyMWNiODAwNTBjNWQwMzVhOWRhZWIyNmQvLS81MDMyL3BsYXlsaXN0Lm0zdTg/dmVyaWZ5PTE3NTY5NDI1NjkyNzd~OTUuNjUuMjE5LjEzNn42Mzc1Y2I4MWViMTMzODVmMDAwYjgyOGIxMWZlYzY4MA==", // link2
     "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rMy5tM3U4", // link3
     "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rNC5tM3U4"  // link4
   ];
 
   let currentIndex = 0;
   let player;
+  let isLoading = true;
+  let viewerCount = Math.floor(Math.random() * 1000) + 500; // Random viewer count for demo
 
-  function changeServer(index){
+  // Update viewer count periodically
+  function updateViewerCount() {
+    // Simulate viewer count changes
+    viewerCount += Math.floor(Math.random() * 10) - 4;
+    if (viewerCount < 400) viewerCount = 400;
+    document.getElementById('viewer-count').textContent = viewerCount.toLocaleString();
+  }
+  
+  setInterval(updateViewerCount, 5000);
+
+  function changeServer(index) {
+    // Update UI
+    document.querySelectorAll('.server-btn').forEach((btn, i) => {
+      if (i === index) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    
+    const serverNames = ['Sunucu 1', 'Sunucu 2', 'Sunucu 3', 'Sunucu 4'];
+    document.getElementById('current-server').textContent = serverNames[index];
+    
+    // Show loading state
+    isLoading = true;
+    document.getElementById('error-message').style.display = 'none';
+    document.querySelector('.loading').style.display = 'flex';
+    
     currentIndex = index;
-    const url = atob(links[index]);
-    if(player) { player.destroy(); } // Önceki playerı temizle
+    const encodedUrl = links[index];
+    let url;
+    
+    try {
+      url = atob(encodedUrl);
+    } catch (e) {
+      showError("URL çözümlenirken hata oluştu.");
+      return;
+    }
+    
+    if (player) {
+      player.destroy();
+    }
+    
+    // Create new player
     player = new Clappr.Player({
       source: url,
       parentId: "#player-container",
       width: "100%",
-      height: 480,
+      height: "100%",
       autoPlay: true,
       mute: false,
-      mediacontrol: { seekbar: "#FF0000" },
-      hideMediaControl: false
+      mediacontrol: { seekbar: "#E50914" },
+      hideMediaControl: false,
+      plugins: [],
+      events: {
+        onReady: function() {
+          isLoading = false;
+          document.querySelector('.loading').style.display = 'none';
+        },
+        onError: function() {
+          showError("Yayın yüklenemedi. Lütfen başka bir sunucu deneyin.");
+        }
+      }
     });
   }
 
-  // Sayfa açılınca Sunucu 1'i başlat
-  changeServer(0);
+  function showError(message) {
+    isLoading = false;
+    document.querySelector('.loading').style.display = 'none';
+    const errorElement = document.getElementById('error-message');
+    errorElement.querySelector('p').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+    errorElement.style.display = 'block';
+  }
+
+  function retryStream() {
+    document.getElementById('error-message').style.display = 'none';
+    changeServer(currentIndex);
+  }
+
+  // Initialize with first server
+  window.onload = function() {
+    changeServer(0);
+    document.querySelector('.server-btn').classList.add('active');
+    updateViewerCount();
+  };
 </script>
 
 </body>
