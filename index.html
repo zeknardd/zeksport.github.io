@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zeksport - Canlı TV İzle</title>
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root {
@@ -17,6 +18,7 @@
     --button-bg: #222222;
     --button-hover: #333333;
     --active-button: #444444;
+    --success-color: #00c853;
   }
   
   * {
@@ -268,6 +270,16 @@
     left: 10px;
   }
   
+  .proxy-notice {
+    background: #2c2c2c;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--gray-text);
+    border-left: 4px solid var(--success-color);
+  }
+  
   footer {
     text-align: center;
     padding: 25px 0;
@@ -334,7 +346,7 @@
     }
     
     #player-container {
-      min-height: 300px;
+      min-height: 250px;
     }
     
     .server-info {
@@ -360,7 +372,7 @@
     <div class="server-buttons">
       <button class="server-btn" onclick="changeServer(0)">
         <i class="fas fa-satellite"></i>
-        <span>Beinsport</span>
+        <span>beinsport</span>
         <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(1)">
@@ -371,12 +383,12 @@
       <button class="server-btn" onclick="changeServer(2)">
         <i class="fas fa-satellite"></i>
         <span>Tabispor</span>
-        <span class="status-indicator status-offline"></span>
+        <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(3)">
         <i class="fas fa-satellite"></i>
-        <span>Exxenspor</span>
-        <span class="status-indicator status-offline"></span>
+        <span> A spor</span>
+        <span class="status-indicator status-live"></span>
       </button>
     </div>
   </div>
@@ -408,7 +420,7 @@
     
     <div class="server-info">
       <div class="server-status">
-        <span>Mevcut Kanal: <strong id="current-server">1. Kanal</strong></span>
+        <span>Mevcut Kanal: <strong id="current-server">beinsport</strong></span>
         <span class="status-indicator status-live"></span>
         <span>Canlı Yayın</span>
       </div>
@@ -418,22 +430,19 @@
       </div>
     </div>
     
-    <div class="quality-selector">
-      <p>Video Kalitesi:</p>
-      <button class="quality-btn active" onclick="changeQuality('auto')">Otomatik</button>
-      <button class="quality-btn" onclick="changeQuality('low')">Düşük</button>
-      <button class="quality-btn" onclick="changeQuality('medium')">Orta</button>
-      <button class="quality-btn" onclick="changeQuality('high')">Yüksek</button>
+    <div class="proxy-notice">
+      <i class="fas fa-info-circle"></i> 
+      Not: Bazı kanallar coğrafi kısıtlama nedeniyle çalışmayabilir. Lütfen farklı bir kanal deneyin.
     </div>
     
     <div class="troubleshooting">
-      <h3><i class="fas fa-tools"></i> Görüntü Sorunu Çözümleri</h3>
+      <h3><i class="fas fa-tools"></i> Yayın Sorunu Çözümleri</h3>
       <ul>
         <li>Sayfayı yeniden yüklemeyi deneyin (F5)</li>
         <li>Farklı bir tarayıcı kullanmayı deneyin (Chrome, Firefox)</li>
         <li>Diğer kanalları deneyin</li>
+        <li>VPN kullanmayı deneyin (coğrafi kısıtlamalar için)</li>
         <li>Tarayıcı önbelleğini temizleyin</li>
-        <li>Donanım hızlandırmayı açın/kapatın</li>
       </ul>
     </div>
   </section>
@@ -446,12 +455,12 @@
 </footer>
 
 <script>
-  // Yayın linkleri
+  // Yayın linkleri - CORS proxy ile
   const links = [
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5062/playlist.m3u8?verify=1756944742802~95.65.219.136~9a7c4baac55ccfa988b0a4579c0e0efc", // 1. Kanal
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 2. Kanal
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5072/playlist.m3u8?verify=1756945104372~95.65.219.136~f6b8d569e30740672927a04a26ae8822", // 3. Kanal
-    "https://example.com/link4.m3u8"  // 4. Kanal
+    "https://corsproxy.io/?https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5062/playlist.m3u8?verify=1756946284182~95.65.219.136~e0656e35f0b9ed2b20b1711f2b86b2d5", // 1. Kanal
+    "https://corsproxy.io/?https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 2. Kanal (CORS proxy ile)
+    "https://corsproxy.io/?https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5071/playlist.m3u8?verify=1756946887131~95.65.219.136~f9e555bd14a278f910a30b245fdde81c", // 3. Kanal
+    "https://corsproxy.io/?https://example.com/link4.m3u8"  // 4. Kanal
   ];
 
   let currentIndex = 0;
@@ -503,11 +512,12 @@
         autoPlay: true,
         mute: false,
         playback: {
-          playbacks: [
-            Clappr.HLSPlayback, // HLS desteği
-            Clappr.FlashLSPlayback, // Flash yedekleme
-            Clappr.HTML5VideoPlayback // HTML5 video
-          ]
+          playbacks: [Clappr.HLSPlayback],
+          hlsjsConfig: {
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 90
+          }
         },
         mediacontrol: { seekbar: "#E50914" },
         hideMediaControl: false,
@@ -519,7 +529,14 @@
             console.log("Player hazır");
           },
           onError: function(e) {
-            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin.");
+            // Eğer ilk kanalda hata alınırsa, CORS proxy'li kanalı dene
+            if (index === 0) {
+              console.log("İlk kanalda hata, proxy'li kanala geçiliyor...");
+              changeServer(1);
+              return;
+            }
+            
+            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin veya VPN kullanmayı deneyin.");
             console.error("Player hatası:", e);
           }
         }
