@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zeksport - Canlı Yayın</title>
-<!-- Clappr Player -->
+<title>Zeksport - Canlı TV İzle</title>
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root {
     --primary-color: #e50914;
+    --secondary-color: #0071eb;
     --dark-bg: #121212;
     --darker-bg: #0a0a0a;
     --light-text: #ffffff;
@@ -43,14 +42,25 @@
     background: var(--darker-bg);
     padding: 15px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   
   .logo {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: var(--primary-color);
     margin-bottom: 15px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .logo i {
+    color: var(--secondary-color);
   }
   
   .server-buttons {
@@ -65,38 +75,41 @@
     background: var(--button-bg);
     color: var(--light-text);
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 12px 18px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     transition: all 0.3s ease;
+    font-weight: 500;
   }
   
   .server-btn:hover {
     background: var(--button-hover);
+    transform: translateY(-2px);
   }
   
   .server-btn.active {
     background: var(--active-button);
-    border-left: 3px solid var(--primary-color);
+    border-left: 4px solid var(--primary-color);
   }
   
   .server-btn i {
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .status-indicator {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     margin-left: 5px;
   }
   
   .status-live {
-    background: var(--primary-color);
+    background: #00ff00;
+    box-shadow: 0 0 8px #00ff00;
   }
   
   .status-offline {
@@ -110,54 +123,63 @@
   #player-container {
     width: 100%;
     margin: 0 auto;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     background: #000;
+    position: relative;
+    min-height: 400px;
   }
   
   .player-info {
-    margin-top: 15px;
+    margin-top: 20px;
     text-align: center;
+  }
+  
+  .player-info h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--secondary-color);
   }
   
   .server-info {
     background: var(--darker-bg);
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-top: 15px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
   }
   
   .server-status {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   
   .viewer-count {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     color: var(--gray-text);
+    font-size: 15px;
   }
   
   .loading {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 300px;
+    height: 400px;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
   }
   
   .spinner {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border: 4px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     border-top: 4px solid var(--primary-color);
@@ -171,9 +193,9 @@
   
   .error-message {
     background: #d32f2f;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
     text-align: center;
     display: none;
   }
@@ -182,33 +204,70 @@
     background: var(--primary-color);
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 10px 18px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .retry-btn:hover {
+    background: #ff0000;
+    transform: scale(1.05);
   }
   
   footer {
     text-align: center;
-    padding: 20px 0;
+    padding: 25px 0;
     color: var(--gray-text);
     font-size: 14px;
-    margin-top: 30px;
+    margin-top: 40px;
     border-top: 1px solid #222;
+  }
+  
+  .quality-selector {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .quality-btn {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .quality-btn:hover {
+    background: #555;
+  }
+  
+  .quality-btn.active {
+    background: var(--secondary-color);
   }
   
   @media (max-width: 768px) {
     .server-buttons {
-      gap: 5px;
+      gap: 8px;
     }
     
     .server-btn {
-      padding: 8px 12px;
+      padding: 10px 15px;
       font-size: 14px;
     }
     
     #player-container {
-      height: 300px;
+      height: 350px;
+    }
+    
+    .logo {
+      font-size: 24px;
     }
   }
   
@@ -218,20 +277,25 @@
     }
     
     .server-btn {
-      padding: 10px;
+      padding: 12px;
     }
     
     .server-btn i {
-      font-size: 16px;
+      font-size: 18px;
     }
     
     #player-container {
-      height: 250px;
+      height: 300px;
     }
     
     .server-info {
       flex-direction: column;
       align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .logo {
+      font-size: 22px;
     }
   }
 </style>
@@ -240,26 +304,29 @@
 
 <header>
   <div class="container">
-    <div class="logo">ZEKSPORT</div>
+    <div class="logo">
+      <i class="fas fa-tv"></i>
+      ZEKSPORT TV
+    </div>
     <div class="server-buttons">
       <button class="server-btn" onclick="changeServer(0)">
-        <i class="fas fa-server"></i>
-        <span>Sunucu 1</span>
+        <i class="fas fa-satellite"></i>
+        <span>1. Kanal</span>
         <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(1)">
-        <i class="fas fa-server"></i>
-        <span>Sunucu 2</span>
+        <i class="fas fa-satellite"></i>
+        <span>2. Kanal</span>
         <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(2)">
-        <i class="fas fa-server"></i>
-        <span>Sunucu 3</span>
+        <i class="fas fa-satellite"></i>
+        <span>3. Kanal</span>
         <span class="status-indicator status-offline"></span>
       </button>
       <button class="server-btn" onclick="changeServer(3)">
-        <i class="fas fa-server"></i>
-        <span>Sunucu 4</span>
+        <i class="fas fa-satellite"></i>
+        <span>4. Kanal</span>
         <span class="status-indicator status-offline"></span>
       </button>
     </div>
@@ -271,66 +338,75 @@
     <div id="player-container">
       <div class="loading">
         <div class="spinner"></div>
-        <p>Yayın yükleniyor...</p>
+        <p>Yayın yükleniyor, lütfen bekleyin...</p>
       </div>
     </div>
     
     <div class="error-message" id="error-message">
-      <p><i class="fas fa-exclamation-triangle"></i> Yayın yüklenirken bir hata oluştu.</p>
-      <button class="retry-btn" onclick="retryStream()">Tekrar Dene</button>
+      <p><i class="fas fa-exclamation-triangle"></i> <span id="error-text">Yayın yüklenirken bir hata oluştu.</span></p>
+      <button class="retry-btn" onclick="retryStream()">
+        <i class="fas fa-redo"></i> Tekrar Dene
+      </button>
     </div>
     
     <div class="player-info">
       <h2>Canlı Yayın</h2>
-      <p>Zeksport - Spor ve Haber Canlı Yayını</p>
+      <p>Zeksport TV - Kaliteli Yayın Keyfi</p>
     </div>
     
     <div class="server-info">
       <div class="server-status">
-        <span>Mevcut Sunucu: <strong id="current-server">Sunucu 1</strong></span>
+        <span>Mevcut Kanal: <strong id="current-server">1. Kanal</strong></span>
         <span class="status-indicator status-live"></span>
-        <span>Canlı</span>
+        <span>Canlı Yayın</span>
       </div>
       <div class="viewer-count">
-        <i class="fas fa-users"></i>
+        <i class="fas fa-eye"></i>
         <span id="viewer-count">0</span> izleyici
       </div>
+    </div>
+    
+    <div class="quality-selector">
+      <p>Video Kalitesi:</p>
+      <button class="quality-btn active" onclick="changeQuality('auto')">Otomatik</button>
+      <button class="quality-btn" onclick="changeQuality('low')">Düşük</button>
+      <button class="quality-btn" onclick="changeQuality('medium')">Orta</button>
+      <button class="quality-btn" onclick="changeQuality('high')">Yüksek</button>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="container">
-    <p>© 2023 Zeksport - Tüm hakları saklıdır.</p>
+    <p>© Zeksport TV - Tüm hakları saklıdır. | Kesintisiz yayın keyfi</p>
   </div>
 </footer>
 
 <script>
-  // Yayın linklerini Base64 ile gizleme
+  // Yayın linkleri - Base64 kodlaması kaldırıldı
   const links = [
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // link1
-    "aHR0cHM6Ly9hLnN0cm1yZHItY2Ytd29ya2VyLWUyNjJkNzFmYTQud29ya2Vycy5kZXYvYmMyYjA1ZDMyMWNiODAwNTBjNWQwMzVhOWRhZWIyNmQvLS81MDMyL3BsYXlsaXN0Lm0zdTg/dmVyaWZ5PTE3NTY5NDI1NjkyNzd~OTUuNjUuMjE5LjEzNn42Mzc1Y2I4MWViMTMzODVmMDAwYjgyOGIxMWZlYzY4MA==", // link2
-    "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rMy5tM3U4", // link3
-    "aHR0cHM6Ly9leGFtcGxlLmNvbS9saW5rNC5tM3U4"  // link4
+    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 1. Kanal
+    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 2. Kanal
+    "https://example.com/link3.m3u8", // 3. Kanal
+    "https://example.com/link4.m3u8"  // 4. Kanal
   ];
 
   let currentIndex = 0;
   let player;
   let isLoading = true;
-  let viewerCount = Math.floor(Math.random() * 1000) + 500; // Random viewer count for demo
+  let viewerCount = Math.floor(Math.random() * 1000) + 500;
 
-  // Update viewer count periodically
+  // İzleyici sayısını güncelleme
   function updateViewerCount() {
-    // Simulate viewer count changes
     viewerCount += Math.floor(Math.random() * 10) - 4;
     if (viewerCount < 400) viewerCount = 400;
-    document.getElementById('viewer-count').textContent = viewerCount.toLocaleString();
+    document.getElementById('viewer-count').textContent = viewerCount.toLocaleString('tr-TR');
   }
   
   setInterval(updateViewerCount, 5000);
 
   function changeServer(index) {
-    // Update UI
+    // UI güncelleme
     document.querySelectorAll('.server-btn').forEach((btn, i) => {
       if (i === index) {
         btn.classList.add('active');
@@ -339,57 +415,53 @@
       }
     });
     
-    const serverNames = ['Sunucu 1', 'Sunucu 2', 'Sunucu 3', 'Sunucu 4'];
+    const serverNames = ['1. Kanal', '2. Kanal', '3. Kanal', '4. Kanal'];
     document.getElementById('current-server').textContent = serverNames[index];
     
-    // Show loading state
+    // Yükleme durumunu göster
     isLoading = true;
     document.getElementById('error-message').style.display = 'none';
     document.querySelector('.loading').style.display = 'flex';
     
     currentIndex = index;
-    const encodedUrl = links[index];
-    let url;
-    
-    try {
-      url = atob(encodedUrl);
-    } catch (e) {
-      showError("URL çözümlenirken hata oluştu.");
-      return;
-    }
+    const url = links[index];
     
     if (player) {
       player.destroy();
     }
     
-    // Create new player
-    player = new Clappr.Player({
-      source: url,
-      parentId: "#player-container",
-      width: "100%",
-      height: "100%",
-      autoPlay: true,
-      mute: false,
-      mediacontrol: { seekbar: "#E50914" },
-      hideMediaControl: false,
-      plugins: [],
-      events: {
-        onReady: function() {
-          isLoading = false;
-          document.querySelector('.loading').style.display = 'none';
-        },
-        onError: function() {
-          showError("Yayın yüklenemedi. Lütfen başka bir sunucu deneyin.");
+    // Yeni oynatıcı oluştur
+    try {
+      player = new Clappr.Player({
+        source: url,
+        parentId: "#player-container",
+        width: "100%",
+        height: "100%",
+        autoPlay: true,
+        mute: false,
+        mediacontrol: { seekbar: "#E50914" },
+        hideMediaControl: false,
+        plugins: [],
+        events: {
+          onReady: function() {
+            isLoading = false;
+            document.querySelector('.loading').style.display = 'none';
+          },
+          onError: function(e) {
+            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin. Hata: " + (e && e.message ? e.message : "Bilinmeyen hata"));
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      showError("Player oluşturulurken hata oluştu: " + error.message);
+    }
   }
 
   function showError(message) {
     isLoading = false;
     document.querySelector('.loading').style.display = 'none';
     const errorElement = document.getElementById('error-message');
-    errorElement.querySelector('p').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+    document.getElementById('error-text').textContent = message;
     errorElement.style.display = 'block';
   }
 
@@ -398,7 +470,18 @@
     changeServer(currentIndex);
   }
 
-  // Initialize with first server
+  function changeQuality(quality) {
+    document.querySelectorAll('.quality-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Burada kalite değiştirme işlemi yapılabilir
+    // Gerçek uygulamada player.setQuality() gibi bir metod kullanılır
+    console.log("Kalite değiştirildi: " + quality);
+  }
+
+  // İlk açılışta 1. Kanal'ı başlat
   window.onload = function() {
     changeServer(0);
     document.querySelector('.server-btn').classList.add('active');
