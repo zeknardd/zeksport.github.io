@@ -131,6 +131,20 @@
     min-height: 400px;
   }
   
+  .player-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+  }
+  
+  #player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
   .player-info {
     margin-top: 20px;
     text-align: center;
@@ -219,6 +233,41 @@
     transform: scale(1.05);
   }
   
+  .troubleshooting {
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid var(--secondary-color);
+  }
+  
+  .troubleshooting h3 {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .troubleshooting ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .troubleshooting li {
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+  }
+  
+  .troubleshooting li:before {
+    content: "•";
+    color: var(--primary-color);
+    font-weight: bold;
+    position: absolute;
+    left: 10px;
+  }
+  
   footer {
     text-align: center;
     padding: 25px 0;
@@ -263,7 +312,7 @@
     }
     
     #player-container {
-      height: 350px;
+      min-height: 350px;
     }
     
     .logo {
@@ -285,7 +334,7 @@
     }
     
     #player-container {
-      height: 300px;
+      min-height: 300px;
     }
     
     .server-info {
@@ -311,22 +360,22 @@
     <div class="server-buttons">
       <button class="server-btn" onclick="changeServer(0)">
         <i class="fas fa-satellite"></i>
-        <span>1. Kanal</span>
+        <span>Beinsport</span>
         <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(1)">
         <i class="fas fa-satellite"></i>
-        <span>2. Kanal</span>
+        <span>S sport</span>
         <span class="status-indicator status-live"></span>
       </button>
       <button class="server-btn" onclick="changeServer(2)">
         <i class="fas fa-satellite"></i>
-        <span>3. Kanal</span>
+        <span>Tabispor</span>
         <span class="status-indicator status-offline"></span>
       </button>
       <button class="server-btn" onclick="changeServer(3)">
         <i class="fas fa-satellite"></i>
-        <span>4. Kanal</span>
+        <span>Exxenspor</span>
         <span class="status-indicator status-offline"></span>
       </button>
     </div>
@@ -336,7 +385,10 @@
 <main class="container">
   <section class="player-section">
     <div id="player-container">
-      <div class="loading">
+      <div class="player-wrapper">
+        <div id="player"></div>
+      </div>
+      <div class="loading" id="loading">
         <div class="spinner"></div>
         <p>Yayın yükleniyor, lütfen bekleyin...</p>
       </div>
@@ -373,6 +425,17 @@
       <button class="quality-btn" onclick="changeQuality('medium')">Orta</button>
       <button class="quality-btn" onclick="changeQuality('high')">Yüksek</button>
     </div>
+    
+    <div class="troubleshooting">
+      <h3><i class="fas fa-tools"></i> Görüntü Sorunu Çözümleri</h3>
+      <ul>
+        <li>Sayfayı yeniden yüklemeyi deneyin (F5)</li>
+        <li>Farklı bir tarayıcı kullanmayı deneyin (Chrome, Firefox)</li>
+        <li>Diğer kanalları deneyin</li>
+        <li>Tarayıcı önbelleğini temizleyin</li>
+        <li>Donanım hızlandırmayı açın/kapatın</li>
+      </ul>
+    </div>
   </section>
 </main>
 
@@ -383,11 +446,11 @@
 </footer>
 
 <script>
-  // Yayın linkleri - Base64 kodlaması kaldırıldı
+  // Yayın linkleri
   const links = [
-    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 1. Kanal
+    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5062/playlist.m3u8?verify=1756944742802~95.65.219.136~9a7c4baac55ccfa988b0a4579c0e0efc", // 1. Kanal
     "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5032/playlist.m3u8?verify=1756942569277~95.65.219.136~6375cb81eb13385f000b828b11fec680", // 2. Kanal
-    "https://example.com/link3.m3u8", // 3. Kanal
+    "https://a.strmrdr-cf-worker-e262d71fa4.workers.dev/bc2b05d321cb80050c5d035a9daeb26d/-/5072/playlist.m3u8?verify=1756945104372~95.65.219.136~f6b8d569e30740672927a04a26ae8822", // 3. Kanal
     "https://example.com/link4.m3u8"  // 4. Kanal
   ];
 
@@ -421,7 +484,7 @@
     // Yükleme durumunu göster
     isLoading = true;
     document.getElementById('error-message').style.display = 'none';
-    document.querySelector('.loading').style.display = 'flex';
+    document.getElementById('loading').style.display = 'flex';
     
     currentIndex = index;
     const url = links[index];
@@ -434,21 +497,30 @@
     try {
       player = new Clappr.Player({
         source: url,
-        parentId: "#player-container",
+        parentId: "#player",
         width: "100%",
         height: "100%",
         autoPlay: true,
         mute: false,
+        playback: {
+          playbacks: [
+            Clappr.HLSPlayback, // HLS desteği
+            Clappr.FlashLSPlayback, // Flash yedekleme
+            Clappr.HTML5VideoPlayback // HTML5 video
+          ]
+        },
         mediacontrol: { seekbar: "#E50914" },
         hideMediaControl: false,
         plugins: [],
         events: {
           onReady: function() {
             isLoading = false;
-            document.querySelector('.loading').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+            console.log("Player hazır");
           },
           onError: function(e) {
-            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin. Hata: " + (e && e.message ? e.message : "Bilinmeyen hata"));
+            showError("Yayın yüklenemedi. Lütfen başka bir kanal deneyin.");
+            console.error("Player hatası:", e);
           }
         }
       });
@@ -459,7 +531,7 @@
 
   function showError(message) {
     isLoading = false;
-    document.querySelector('.loading').style.display = 'none';
+    document.getElementById('loading').style.display = 'none';
     const errorElement = document.getElementById('error-message');
     document.getElementById('error-text').textContent = message;
     errorElement.style.display = 'block';
@@ -476,8 +548,6 @@
     });
     event.target.classList.add('active');
     
-    // Burada kalite değiştirme işlemi yapılabilir
-    // Gerçek uygulamada player.setQuality() gibi bir metod kullanılır
     console.log("Kalite değiştirildi: " + quality);
   }
 
